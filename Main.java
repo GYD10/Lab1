@@ -1,6 +1,7 @@
 ﻿package com.graph;
 //1.4修改4
 //2.4修改4
+package com.graph;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Scanner;
