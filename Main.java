@@ -6,10 +6,6 @@ import java.io.FileReader;
 import java.util.Scanner;
 import java.lang.Exception;
 public class Main {
-<<<<<<< HEAD
-=======
-
->>>>>>> C4
     public static File filename;
     public static int j=0,t=0,i=0,f=0,n=0,g=0,txtlen=0,che=0,chek=0,check=0,way=0;
     public static String[] txt=new String[100];//�ַ���
