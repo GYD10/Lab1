@@ -270,7 +270,7 @@ public class Graph {
                 return "no way";
             } else {
                 GraphViz gv = new GraphViz();
-                gv.addln(gv.start_graph());
+                gv.addln(gv.startgraph());
                 for (i = 0; i < txtlen - 1; i++) {
                     for (j = 0; j < txtlen; j++) {
                         if (G[i][j] != 0) {
@@ -279,7 +279,7 @@ public class Graph {
                     }
                 }
                 gv.addln(newsc);  //���·��
-                gv.addln(gv.end_graph());
+                gv.addln(gv.endgraph());
                 System.out.println(gv.getDotSource());
                 String type = "png";
                 File out = new File("F:\\最短路径生成图." + type);
@@ -420,20 +420,20 @@ public class Graph {
         }
         newsc=newsc+";";
         GraphViz gv = new GraphViz();
-        gv.addln(gv.start_graph());
+        gv.addln(gv.startgraph());
         gv.addln(newsc);
-        gv.addln(gv.end_graph());
+        gv.addln(gv.endgraph());
         System.out.println(gv.getDotSource());
         String type = "png";
-        File out = new File("F:\\随机游走." + type);
-        gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
+        /*File out = new File("F:\\随机游走." + type);
+        gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );*/
         return newsc;
     }
 
     public static void start(int G[][])
     {
         GraphViz gv = new GraphViz();
-        gv.addln(gv.start_graph());
+        gv.addln(gv.startgraph());
         for(i=0;i<txtlen-1;i++) {
             for(j=0;j<txtlen;j++) {
                 if(G[i][j]!=0) {
@@ -441,7 +441,7 @@ public class Graph {
                 }
             }
         }
-        gv.addln(gv.end_graph());
+        gv.addln(gv.endgraph());
         System.out.println(gv.getDotSource());
         String type = "png";
         File out = new File("F:\\展示有向图." + type);
