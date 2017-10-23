@@ -2,8 +2,10 @@
 //1.4修改1
 import java.util.*;
 import java.io.File;
+import java.util.Scanner;
 import java.io.FileReader;
 import java.lang.String;
+import java.util.Arrays;
 public class Graph {
     public static int j=0,t=0,i=0,f=0,n=0,g=0,txtlen=0,che=0,chek=0,check=0,way=0;
     public static String[] txt=new String[100];//�ַ���
@@ -12,7 +14,13 @@ public class Graph {
     public static int [][] path=new int[txtlen][txtlen];
     public static int [][] signal=new int[txtlen][txtlen];
     public static String newsc="",bword="",word1,word2;
-    public static int transFile(int fileLen, char[] chars) {
+    public static int[][] createDirectedGraph (String filename)throws Exception  {
+        File file = new File(filename);//文件位置   D:\\JAVA\\2017_work\\work1\\file1.txt//
+        FileReader reader = new FileReader(file);
+        int fileLen = (int) file.length();//文件内容长度
+        int j=0,t=0,i=0,f=0,n=0,g=0;//txtLen 为最终字符串长度即单词个数
+        char[] chars = new char[fileLen];
+        reader.read(chars);//按字符读进数组
         for( i=0;i<fileLen;i++){
             if ((chars[i]<='z')&&(chars[i]>='a')){   //规范内容
                 continue;
@@ -48,9 +56,11 @@ public class Graph {
                 continue;
             }
         }
-        return fileLen;
-    } 
-    public static void generateWords(int fileLen, char[] chars) {
+        for(i=0;i<fileLen;i++){ //计算单词长度
+            if(chars[i]==' '){
+                n++;
+            }
+        }
         txtlen=n+1;
         j=0;
         for(i=0;i<fileLen;i++){ //生成单词
@@ -69,23 +79,12 @@ public class Graph {
         if(txt[txtlen-1].equals(" ")){
             txtlen--;
         }
-    }
-    public static int[][] createDirectedGraph (String filename)throws Exception  {
-        File file = new File(filename);//文件位置   D:\\JAVA\\2017_work\\work1\\file1.txt//
-        FileReader reader = new FileReader(file);
-        int fileLen = (int) file.length();//文件内容长度
-        int j=0,t=0,i=0,f=0,g=0;//txtLen 为最终字符串长度即单词个数
-        n = 0;
-        char[] chars = new char[fileLen];
-        reader.read(chars);//按字符读进数组
-        reader.close();
-        fileLen = transFile(fileLen, chars);
-        for(i=0;i<fileLen;i++){ //计算单词长度
-            if(chars[i]==' '){
-                n++;
-            }
+        //System.out.println(txtlen);
+        LinkList linkList=new LinkList();
+        for(i=txtlen;i>0;i--){
+            linkList.addhead(txt[i-1]);
         }
-        generateWords(fileLen, chars);
+        linkList.displayList();
         int [][] G=new int[txtlen][txtlen];
         for(i=0;i<txtlen-1;i++){                               //构造图G
             n=0;
@@ -142,8 +141,31 @@ public class Graph {
                 }
             }
         }
+        for(i=0;i<txtlen;i++){
+            for(j=0;j<txtlen;j++){
+                System.out.print(G[i][j]);
+            }
+            System.out.println("  "+txt[i]);
+        }
         start(G);
         return G;
+    }
+    public static String queryBridgeWords2(int G[][],String word1, String word2) {
+        che=0;
+        bword="";
+        for(i=0;i<txtlen-2;i++) {
+            if((word1.equals(txt[i])==true)&&(word2.equals(txt[i+2])==true)) {
+                bgw[che]=txt[i+1];
+                bword=bword+" "+txt[i+1];
+                che++;
+            }
+        }
+        if(bword.equals("")==true){
+            return "No bridge words from word1 to word2!" ;
+        }else{
+            check=1;
+            return "The bridge words from word1 to word2 are: "+bword ;
+        }
     }
     public static String queryBridgeWords(int G[][],String word1, String word2) {
         che=0;
@@ -162,16 +184,6 @@ public class Graph {
         else {
             for (i = 0; i < txtlen - 2; i++) {
                 if ((word1.equals(txt[i]) == true) && (word2.equals(txt[i + 2]) == true)) {
-                	boolean flag = false;
-                	for(int bf = 0; bf < che; bf++) {
-                		if(bgw[bf].equals(txt[i + 1])) {
-                			flag = true;
-                			break;
-                		}
-                	}
-                	if(flag) {
-                		continue;
-                	}
                     bgw[che] = txt[i + 1];
                     bword = bword + " " + txt[i + 1];
                     che++;
@@ -192,8 +204,8 @@ public class Graph {
         for (j = 0; j < wordlist.length - 1; j++) {
             check=0;
             newsc = newsc + wordlist[j] + " ";
-            queryBridgeWords(G, wordlist[j], wordlist[j + 1]);
-            if(che > 0){
+            queryBridgeWords2(G, wordlist[j], wordlist[j + 1]);
+            if(check==1){
                 n = random.nextInt(che);
                 newsc = newsc + bgw[n] + " ";
             }
@@ -236,7 +248,7 @@ public class Graph {
                 }
             }
         }
-        chek = 0;
+
         for (i = 0; i < txtlen; i++) {
             if (word1.equals(txt[i]) == true) {
                 check = 1;
@@ -270,7 +282,7 @@ public class Graph {
                 return "no way";
             } else {
                 GraphViz gv = new GraphViz();
-                gv.addln(gv.startgraph());
+                gv.addln(gv.start_graph());
                 for (i = 0; i < txtlen - 1; i++) {
                     for (j = 0; j < txtlen; j++) {
                         if (G[i][j] != 0) {
@@ -279,10 +291,10 @@ public class Graph {
                     }
                 }
                 gv.addln(newsc);  //���·��
-                gv.addln(gv.endgraph());
+                gv.addln(gv.end_graph());
                 System.out.println(gv.getDotSource());
                 String type = "png";
-                File out = new File("F:\\最短路径生成图." + type);
+                File out = new File("C:\\Users\\gyd\\Desktop\\pic\\最短路径生成图." + type);
                 gv.writeGraphToFile(gv.getGraph(gv.getDotSource(), type), out);
                 return "the ShortestPath is: " + way + " " + newsc;
             }
@@ -322,8 +334,8 @@ public class Graph {
                 }
             }
         }
-        
-        check = 0;
+
+
         for(i=0;i<txtlen;i++) {
             if(word1.equals(txt[i])==true) {
                 check=1;
@@ -420,20 +432,20 @@ public class Graph {
         }
         newsc=newsc+";";
         GraphViz gv = new GraphViz();
-        gv.addln(gv.startgraph());
+        gv.addln(gv.start_graph());
         gv.addln(newsc);
-        gv.addln(gv.endgraph());
+        gv.addln(gv.end_graph());
         System.out.println(gv.getDotSource());
         String type = "png";
-        /*File out = new File("F:\\随机游走." + type);
-        gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );*/
+        File out = new File("C:\\Users\\gyd\\Desktop\\pic\\随机游走." + type);
+        gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
         return newsc;
     }
 
     public static void start(int G[][])
     {
         GraphViz gv = new GraphViz();
-        gv.addln(gv.startgraph());
+        gv.addln(gv.start_graph());
         for(i=0;i<txtlen-1;i++) {
             for(j=0;j<txtlen;j++) {
                 if(G[i][j]!=0) {
@@ -441,10 +453,10 @@ public class Graph {
                 }
             }
         }
-        gv.addln(gv.endgraph());
+        gv.addln(gv.end_graph());
         System.out.println(gv.getDotSource());
         String type = "png";
-        File out = new File("F:\\展示有向图." + type);
+        File out = new File("C:\\Users\\gyd\\Desktop\\pic\\展示有向图." + type);
         gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
     }
 
